@@ -18,20 +18,20 @@ $(window).load(function() {
 	
 	var score = 0;
 	var counter = 0;
-	var gameOver = false
+	var gameFirst = true
+	var gameOver = true
 	var messages
 	
 	function init() {
-		updateCanvasDimensions();
-
-		resetGame();
-
-		
 		initEventListeners();
+		updateCanvasDimensions();
+		//resetGame();
 		timeout();
 	};
 	
+	
 	function resetGame() {
+		updateCanvasDimensions();
 		
 		ratCollection = new RatCollection();
 		ratCollection.newRat();
@@ -45,6 +45,7 @@ $(window).load(function() {
 		score = 0;
 		counter = 0;
 		gameOver = false;
+		gameFirst = false;
 	}
 	
 	function initEventListeners() {
@@ -90,6 +91,8 @@ $(window).load(function() {
 	
 	function onClick(e) {
 		if (gameOver) {
+			document.getElementById('welcomeDiv').setAttribute('style','display: none');
+			//alert(	document.getElementById('welcomeDiv').getAttribute('style') );
 			resetGame();
 		}
 	};
@@ -105,13 +108,12 @@ $(window).load(function() {
 		counter++;
 		if (counter % 10 == 0) {
 			score ++;
-			
 		}
-		if (counter % 500 == 0) {
+		if (counter % 500 == 250) {
 			var cat = catCollection.newCat()
 			messageCollection.newMessage("     New Cat   ", cat.curPos);
 		}
-		if (counter % 500 == 250) {
+		if (counter % 500 == 0) {
 			var rat = ratCollection.newRat()
 			messageCollection.newMessage("Extra Mouse + 10", rat.curPos)
 			score += 10;
@@ -141,7 +143,7 @@ $(window).load(function() {
 		// Stats:
 		ctx.strokeStyle = '#CCC';
 		ctx.font = '20pt Helvetica Neue';
-		ctx.fillText("Score: "+score, canvasWidth - 160, 40 );
+		ctx.fillText("score: "+score, canvasWidth - 180, 40 );
 
 		
 		if (catCollection) {
@@ -153,7 +155,8 @@ $(window).load(function() {
 		if (messageCollection) {
 			messageCollection.draw();
 		}
-		if (gameOver) {
+		
+		if ((!gameFirst) && (gameOver)) {
 			ctx.strokeStyle = '#FFFFFF';
 			ctx.font = '60pt Helvetica Neue';
 			ctx.fillText("Game Over", canvasWidth/2 -200, 100  );

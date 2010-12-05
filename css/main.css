@@ -30,6 +30,16 @@ canvas, section {
 	display: block;
 }
 
+#welcomeDiv {
+	z-index:-1;
+	font-size: 16px;
+	color: #000000;
+	position: absolute;
+	top:50px;
+	right:50px;
+	left:50px;
+}
+
 #c {
 	position: absolute;
 }
