@@ -40,7 +40,7 @@ $(window).load(function() {
 		catCollection.newCat();
 	
 		messageCollection = new MessageCollection();
-		messageCollection.newMessage('Protect the mouse!!', new Vector(canvasWidth/2 , 100))
+		messageCollection.newMessage('Protect the mouse!!', new Vector(canvasWidth/2-30 , 100))
 		
 		score = 0;
 		counter = 0;
@@ -159,9 +159,9 @@ $(window).load(function() {
 		if ((!gameFirst) && (gameOver)) {
 			ctx.strokeStyle = '#FFFFFF';
 			ctx.font = '60pt Helvetica Neue';
-			ctx.fillText("Game Over", canvasWidth/2 -200, 100  );
+			ctx.fillText("Game Over", canvasWidth/2 -230, 100  );
 			ctx.font = '20pt Helvetica Neue';
-			ctx.fillText("Click to play again", canvasWidth/2 - 110, 170  );
+			ctx.fillText("Click to play again", canvasWidth/2 - 130, 170  );
 		}
 	};
 
