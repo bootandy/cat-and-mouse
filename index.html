@@ -1,10 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-    <title>cat & mouse</title>
-    <meta charset="utf-8">
-	<link rel="stylesheet" href="css/main.css" />
-	<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-	<script type="text/javascript" src="js/main.js"></script>
+	<head>
+	    <title>cat & mouse</title>
+	    <meta charset="utf-8">
+		<link rel="stylesheet" href="css/main.css" />
+		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+		<script type="text/javascript" src="js/main.js"></script>
+		
+		<script type="text/javascript">
+		
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-21221503-1']);
+		  _gaq.push(['_trackPageview']);
+		
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		
+		</script>
+	</head>
+	
 	<body >
 		<div id="welcomeDiv">
 			<p>
@@ -22,11 +39,13 @@
 			<p>
 				<b>Click to start</b>
 			</p>
-			<i> Tip: You can 'chase' the Cats away with your pointer and 'terrify' them giving you +20 points!</i>
+			<i> Tip: You can 'chase' the Cats away with your pointer and 'terrify' them giving you +5 points!</i>
 			</p> 
 		</div>
 
-		<canvas id="c"  width="400" height="400"></canvas>
-		<p id="attribution">by andy boot</p>
+		<canvas id="c"  width="400" height="400">
+			<p>Sorry, your browser doesn't support the canvas element. Please use a modern browser like: <a href='http://www.google.com/chrome/intl/en/landing_chrome_mac.html?hl=en'> Chrome </a> </p>
+		</canvas>
+		<a id="attribution" href='http://www.nuclearcarrot.com' target='_blank'>by andy boot</a>
 	</body>
 </html>
