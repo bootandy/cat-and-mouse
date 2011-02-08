@@ -10,10 +10,7 @@ $(window).load(function() {
 	var catCollection;
 	var ratCollection;
 	var messageCollection
-	var ratBoxX
-	var ratBoxY
-	var ratBoxWidth
-	var ratBoxHeight
+	var ratBox;
 	var toRunDistance
 	
 	var score = 0;
@@ -21,11 +18,12 @@ $(window).load(function() {
 	var gameFirst = true
 	var gameOver = true
 	var messages
-	
+	var imageHole = new Image();
+	imageHole.src = 'images/hole.png';
+
 	function init() {
 		initEventListeners();
 		updateCanvasDimensions();
-		//resetGame();
 		timeout();
 	};
 	
@@ -70,10 +68,7 @@ $(window).load(function() {
 		canvasWidth = canvas.width();
 		canvasHeight = canvas.height();
 
-		ratBoxX = canvasWidth/2 - canvasWidth/8 - 10;
-		ratBoxY = canvasHeight/2 - canvasHeight/8 - 10;
-		ratBoxWidth = canvasWidth/4 + 20;
-		ratBoxHeight = canvasHeight/4 + 20;
+		ratBox = new RatBox();
 	
 		toRunDistance =  canvasWidth/32 + canvasHeight/32
 		draw();
@@ -109,11 +104,11 @@ $(window).load(function() {
 		if (counter % 10 == 0) {
 			score ++;
 		}
-		if (counter % 500 == 250) {
+		if (counter % 500 == 0) {
 			var cat = catCollection.newCat()
 			messageCollection.newMessage("     New Cat   ", cat.curPos);
 		}
-		if (counter % 500 == 0) {
+		if (counter % 500 == 250) {
 			var rat = ratCollection.newRat()
 			messageCollection.newMessage("Extra Mouse + 10", rat.curPos)
 			score += 10;
@@ -138,7 +133,12 @@ $(window).load(function() {
 		ctx.strokeRect(5,5, canvasWidth-10, canvasHeight-10);
 		
 		// Inner Rat box
-		ctx.strokeRect(ratBoxX - 5, ratBoxY - 5, ratBoxWidth + 10, ratBoxHeight + 10);
+		if (ratBox) {
+			ratBox.draw();
+		}
+		ctx.fillStyle = '#999999' 
+		
+		ctx.drawImage(imageHole, canvasWidth/2 - imageHole.width/2, canvasHeight/2 - imageHole.height/2);
 		
 		// Stats:
 		ctx.strokeStyle = '#CCC';
@@ -170,6 +170,9 @@ $(window).load(function() {
 		if (!gameOver) {
 			doScore();
 			
+			if (ratBox) {
+				ratBox.update();
+			}
 			if (catCollection) {
 				catCollection.update(ratCollection, messageCollection);
 			}
@@ -241,8 +244,8 @@ $(window).load(function() {
 		this.timeToLive = timeToLiveBase;
 		var baseColor = 0xCC
 		
-		// xAndY Vector object is a POINTER
-		//this.curPos = xAndY
+		// xAndY Vector object is a POINTER - so dont change it
+		// Fail: this.curPos = xAndY
 		
 		var x = xAndY.x
 		if (x < 140) {
@@ -278,6 +281,123 @@ $(window).load(function() {
 		};
 	};
 	
+	function RatBox(){
+		this.minY = Math.round(canvasHeight/2 - canvasHeight/8);
+		this.maxY = Math.round(canvasHeight/2 + canvasHeight/8);
+		this.minX = Math.round(canvasWidth/2 - canvasWidth/8);
+		this.maxX = Math.round(canvasWidth/2 + canvasWidth/8);
+
+		this.coords = new Array();
+		this.coords.push( new Vector( this.minX , 	this.maxY ) );
+		this.coords.push( new Vector( Math.round(canvasWidth/2) ,this.maxY ) );
+		this.coords.push( new Vector( this.maxX , 	this.maxY ) );
+		this.coords.push( new Vector( this.maxX,  	Math.round(canvasHeight/2) ) );
+		this.coords.push( new Vector( this.maxX, 	this.minY ) );
+		this.coords.push( new Vector( Math.round(canvasWidth/2) ,this.minY ) );
+		this.coords.push( new Vector( this.minX, 	this.minY ) );
+		this.coords.push( new Vector( this.minX, 	Math.round(canvasHeight/2) ) );
+
+		
+		this.targetIndex = -1;
+		this.targetVector;
+		
+		this.draw = function(){
+			ctx.strokeStyle = '#999999';
+			ctx.fillStyle = '#EEEEEE'; 
+			ctx.beginPath();
+			ctx.moveTo(this.coords[0].x, this.coords[0].y);
+			for (var i = 1; i < this.coords.length; i++) {
+				ctx.lineTo(this.coords[i].x, this.coords[i].y);
+			}
+			ctx.closePath();
+			ctx.stroke();
+			ctx.fill();
+		}
+		
+		this.update = function() {
+			// if we are going to choose a new node to move
+			if (this.targetIndex == -1 && Math.random() < 0.01) {
+				this.targetIndex = Math.floor(Math.random() * this.coords.length);
+				var v = this.coords[this.targetIndex];
+				
+				this.targetVector = new Vector(v.x, v.y);
+				
+				// select a new target X
+				if (this.targetIndex == 0 || this.targetIndex == 6 || this.targetIndex == 7) {
+					this.targetVector.x -= Math.round(Math.random() * 20);
+				}
+				else if (this.targetIndex == 2 || this.targetIndex == 3 || this.targetIndex == 4) {
+					this.targetVector.x += Math.round(Math.random() * 20);
+				}
+				else { // 1 or 4
+					this.targetVector.x += Math.round(Math.random() * 20) - 10;
+				}
+					
+				// new target Y
+				if (this.targetIndex < 3) {
+					this.targetVector.y += Math.round(Math.random()*20);
+				} 
+				else if (this.targetIndex == 4 || this.targetIndex == 5 || this.targetIndex == 6) {
+					this.targetVector.y -= Math.round(Math.random() * 20);
+				}
+				else {
+					this.targetVector.y += Math.round(Math.random() * 20) - 10;
+				} 
+			}
+			
+			if (this.targetIndex != -1)  {
+				
+				if (this.coords[this.targetIndex].x < this.targetVector.x) {
+					this.coords[this.targetIndex].x += 1;
+				}
+				else if (this.coords[this.targetIndex].x > this.targetVector.x) {
+					this.coords[this.targetIndex].x -= 1;
+				}
+				
+				if (this.coords[this.targetIndex].y < this.targetVector.y) {
+					this.coords[this.targetIndex].y += 1;
+				}
+				else if (this.coords[this.targetIndex].y > this.targetVector.y) {
+					this.coords[this.targetIndex].y -= 1;
+				}
+				
+				// If we have reached our target 
+				if (this.coords[this.targetIndex].x == this.targetVector.x &&
+						this.coords[this.targetIndex].y == this.targetVector.y) {
+					this.targetIndex = -1;
+				}
+			}
+		}
+						
+
+		this.getPotentialVector = function() {
+			do {
+				// Choose random X & Y
+				x = Math.round( this.minX + Math.round(Math.random() * (this.maxX - this.minX)) );
+				y = Math.round( this.minY + Math.round(Math.random() * (this.maxY - this.minY)) );
+				 
+				try {
+					var imgd = ctx.getImageData(x, y, 1, 1);
+					var pixel = imgd.data;
+				} 
+				//Security Exception if we chance upon an image pixel but this only happens for local machines
+				catch (e) {
+//					if (window.console != undefined) {
+//				        console.log(e);
+//				    }
+					x = Math.round( this.minX + Math.round(Math.random() * (this.maxX - this.minX)) );
+					y = Math.round( this.minY + Math.round(Math.random() * (this.maxY - this.minY)) );
+					// Hack to drop JS out of loop.
+					var pixel = [0,0,0];
+				}
+				// If this pixel is pure white -> Then it is outside the ratbox -> choose another one
+			} while(pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255); 
+			
+			return new Vector(x, y);
+		}
+		
+	}
+	
 	function RatCollection(){
 		this.rats = new Array();
 		
@@ -307,10 +427,7 @@ $(window).load(function() {
 			// Generate 10 possible new locations
 			var possibleTargets = new Array();
 			for (var i = 0; i < 10; i++) {
-				v = new Vector( 
-						parseInt( ratBoxX + Math.random() * ratBoxWidth),
-						parseInt( ratBoxY + Math.random() * ratBoxHeight))
-				possibleTargets.push(v);
+				possibleTargets.push( ratBox.getPotentialVector() );
 			}
 			
 			var furthestAway = 0
@@ -363,7 +480,7 @@ $(window).load(function() {
 			// 20% chance of a random rat
 			if (Math.random() < 0.2) {
 				var i = Math.random() * this.rats.length
-				return this.rats[parseInt(i)]
+				return this.rats[Math.floor(i)]
 			}
 			
 			// 80% chance of nearest rat
@@ -466,8 +583,8 @@ $(window).load(function() {
 				// Is cat running really quickly -> Terrified
 				if ( !cat.isTerrified && Math.abs(cat.velocity.x) + Math.abs(cat.velocity.y) > 8) {
 					cat.isTerrified = true;
-					score += 20;
-					messageCollection.newMessage("Terrified Cat! + 20", cat.curPos);
+					score += 5;
+					messageCollection.newMessage("Terrified Cat! + 5", cat.curPos);
 				}
 				if( cat.isTerrified && Math.abs(cat.velocity.x) + Math.abs(cat.velocity.y) < 2) {
 					cat.isTerrified = false
@@ -593,8 +710,25 @@ $(window).load(function() {
 			this.curPos.y += this.velocity.y;
 
 			//If chased out the block:
-			if ((this.curPos.x < -20) || (this.curPos.x > canvasWidth + 20) 
-					|| (this.curPos.y < -20) || (this.curPos.y > canvasHeight + 20)) {
+			var chasedOut = false;
+			
+			if (this.curPos.x < -20) {
+				this.curPos.x = -20;
+				chasedOut = true;
+			}
+			if (this.curPos.x > canvasWidth+20) {
+				this.curPos.x = canvasWidth+20;
+				chasedOut = true;
+			} 
+			if (this.curPos.y < -20) {
+				this.curPos.y = -20;
+				chasedOut = true;
+			}
+			if (this.curPos.y > canvasHeight+20) {
+				this.curPos.y = canvasHeight+20;
+				chasedOut = true;
+			}
+			if (chasedOut) {
 				this.velocity = new Vector(0,0)
 				this.timeRunning = 0
 			}
