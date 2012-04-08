@@ -87,6 +87,7 @@ $(window).load(function() {
 	function onClick(e) {
 		if (gameOver) {
 			document.getElementById('welcomeDiv').setAttribute('style','display: none');
+			document.getElementById('tipDiv').setAttribute('style','display: none');
 			//alert(	document.getElementById('welcomeDiv').getAttribute('style') );
 			resetGame();
 		}

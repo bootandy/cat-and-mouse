@@ -1,7 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-	    <title>cat & mouse</title>
+	    <title>Game - Cat & Mouse</title>
+	<meta name="description" content="Cat and Mouse Game" />
+	<meta name="keywords" content="Cat,Mouse,Game" />
 	    <meta charset="utf-8">
 		<link rel="stylesheet" href="css/main.css" />
 		<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
@@ -24,27 +26,27 @@
 	
 	<body >
 		<div id="welcomeDiv">
-			<p>
-			Hello and welcome to <b> Cat and Mouse</b>
+			<h1> Cat and Mouse Game</h1>
+			
+			<p class="instructions">
+				Protect the mouse -> <img src="images/rat.png" alt="mouse"  /><br/>
+				Scare away the Cat -> <img src="images/cat.png" alt="cat" />
 			</p>
-			<p>
-			The aim of the game is to protect the Mice. The Mice live in the box below.
-			Cats will aproach the box from the side of the screen to eat the mice. 
-			However the Cats are afraid of the mouse pointer.
-			</p> 
-			<p>
-			You must scare the Cats away with your pointer to protect the Mice
+			<br/>
+			<br/>
+			<br/>
+			<br/>
+			<h1> Click to Play Game </h1>
+		</div>
+		
+		<div id="tipDiv">
+			<p class="instructions_tip">
+				Tip: You can 'chase' a Cat away with your mouse pointer and 'terrify' the Cat giving you +5 points!
 			</p>
-			<p>
-			<p>
-				<b>Click to start</b>
-			</p>
-			<i> Tip: You can 'chase' the Cats away with your pointer and 'terrify' them giving you +5 points!</i>
-			</p> 
 		</div>
 
 		<canvas id="c"  width="400" height="400">
-			<p>Sorry, your browser doesn't support the canvas element. Please use a modern browser like: <a href='http://www.google.com/chrome/intl/en/landing_chrome_mac.html?hl=en'> Chrome </a> </p>
+			<p>Please use a modern browser that supports canvas like: <a href='http://www.google.com/chrome/intl/en/landing_chrome_mac.html?hl=en'> Chrome </a> </p>
 		</canvas>
 		<a id="attribution" href='http://www.nuclearcarrot.com' target='_blank'>by andy boot</a>
 	</body>
