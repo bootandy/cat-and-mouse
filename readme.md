@@ -2,7 +2,7 @@ A cat & mouse game. [literally]
 
 Ever felt like you were hearding cats?
 
-Playable [here]( http://nuclearcarrot.co.uk/html5/cat-and-mouse/)
+Playable [here](http://www.nuclearcarrot.co.uk/html5/cat-and-mouse/)
 
 This game started as a way for me to learn html5.
 
