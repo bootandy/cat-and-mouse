@@ -374,27 +374,37 @@ $(window).load(function() {
 		}
 
                this.getPotentialVector = function() {
+		       var count = 0;
                        do {
                                // Choose random X & Y
-                               x = Math.round( this.minX + Math.round(Math.random() * (this.maxX - this.minX)) );
-                               y = Math.round( this.minY + Math.round(Math.random() * (this.maxY - this.minY)) );
-
-                               try {
-                                       var imgd = ctx.getImageData(x, y, 1, 1);
-                                       var pixel = imgd.data;
-                               }
-                               //Security Exception if we chance upon an image pixel
-                               catch (e) {
-				       //console.log('exception!!!!! '+e);
-                                       // Hack to drop JS out of loop.
-                                       var pixel = [0,0,0];
-                               }
-		       // If this pixel is pure white -> Then it is outside the ratbox -> choose another one
-                       } while(pixel[0] == 255 && pixel[1] == 255 && pixel[2] == 255);
+                               var x = Math.round( this.minX + Math.round(Math.random() * (this.maxX - this.minX)) );
+                               var y = Math.round( this.minY + Math.round(Math.random() * (this.maxY - this.minY)) );
+			       count += 1;
+			       // In the highly unlikely event of us persistently randomly choosing a location outside
+			       // the ratbox - we just pick the middle point
+			       if (count == 10) {
+				       x = this.minX + (this.maxX - this.minX)/2;
+				       y = this.minY + (this.maxY - this.minY)/2;
+			       }
+                       } while(!this.inside(x, y))
                        return new Vector(x, y);
 		}
 
+	        // This function casts a ray 'right' and counts the number of line intersections with ratBox.
+	        // Even number of intersections are outside the box. Odd is inside.
+		this.inside = function(x, y) {
+		    var inside = false;
+		    for (var i = 0, j = this.coords.length - 1; i < this.coords.length; j = i++) {
+			var xi = this.coords[i].x, yi = this.coords[i].y;
+			var xj = this.coords[j].x, yj = this.coords[j].y;
 
+			var intersect = ((yi > y) != (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+			if (intersect) {
+				inside = !inside;
+			}
+		    }
+		    return inside;
+		};
 
 	}
 
@@ -416,16 +426,11 @@ $(window).load(function() {
 					continue;
 				}
 				if (rat.targetPos != null && Math.random() < 0.01) {
-					rat.targetPos = this.setNewTargetPos();
+					rat.targetPos = ratBox.getPotentialVector();
 				}
 				rat.update()
 			}
 		}
-
-		this.setNewTargetPos = function() {
-			return ratBox.getPotentialVector();
-		};
-
 
 		this.draw = function() {
 			var ratsLength = this.rats.length;
